@@ -23,10 +23,34 @@ provider:
   #environment:
   #  SAMPLE_ENV_VAR: ${env:SAMPLE_ENV_VAR}
 
+  environment:
+    tableName: notes
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Scan
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:DescribeTable
+      Resource: "arn:aws:dynamodb:eu-west-1:*:*"
+
 functions:
-  hello:
-    handler: handler.hello
+  create:
+    handler: create.main
     events:
       - http:
-          path: hello
+          path: notes
+          method: post
+  get:
+  # Defines an HTTP API endpoint that calls the main function in get.js
+  # - path: url path is /notes/{id}
+  # - method: GET request
+    handler: get.main
+    events:
+      - http:
+          path: notes/{id}
           method: get
